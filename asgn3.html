@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <script src="./WebGazer/www/webgazer.js"></script>
+    </head>
+    <body>
+        <div style="text-align: right;" id="gazeData"></div>
+        <script>
+            webgazer.resume();
+            webgazer.setGazeListener(function(data, elapsedTime) {
+                if (data != null) {
+                    var x = data.x;
+                    var y = data.y;
+                    document.getElementById("gazeData").innerHTML = "Gaze coordinates: x=" + x + ", y=" + y;
+                }
+            }).begin();
+        </script>
+        <style>
+            html, body {height: 100%;margin: 0; padding: 0;}
+            table {width: 100%; height: 100%;border-collapse: collapse;}
+            td {border: 1px solid black;}
+        </style>
+    
+        <table>
+            <tr>
+                <td>Cell 1</td>
+                <td>Cell 2</td>
+                <td>Cell 3</td>
+            </tr>
+            <tr>
+                <td>Cell 4</td>
+                <td>Cell 5</td>
+                <td>Cell 6</td>
+            </tr>
+            <tr>
+                <td>Cell 7</td>
+                <td>Cell 8</td>
+                <td>Cell 9</td>
+            </tr>
+        </table>
+    </body>
+</html>
