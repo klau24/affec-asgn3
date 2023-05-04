@@ -5,7 +5,7 @@
     <body>
         <div style="text-align: right;">
             <p id="gazeData"></p>
-            <button style="text-align: right;" id="exportBtn">Export to CSV</button>
+            <button style="text-align: right;" id="gatherData">Gather Eye + Brain Data</button>
         </div>
         <script>
             webgazer.resume();
@@ -15,18 +15,27 @@
                 if (data != null) {
                     var x = data.x;
                     var y = data.y;
-                    gazeData.push([elapsedTime, x, y]);
+                    var timestamp = (Date.now() / 1000).toFixed(6);
+                    gazeData.push([timestamp, x, y]);
                     document.getElementById("gazeData").innerHTML = "Gaze coordinates: x=" + x + ", y=" + y;
-                    console.log(gazeData)
                 }
             }).begin();
-            const exportBtn = document.getElementById("exportBtn");
-            exportBtn.addEventListener("click", () => {
+            const exportBtn = document.getElementById("gatherData");
+            exportBtn.addEventListener("click", async () => {
+                // Run and simulate brain data
+                const response = await fetch('http://127.0.0.1:5000/run_script');
+                const result = await response.text();
+                console.log(result)
                 // Create a CSV string from the gaze data
                 const csvString = gazeData.map(row => row.join(",")).join("\n");
 
                 // Create a CSV file and download it
                 const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+                return fetch('http://127.0.0.1:5000/combine_data', {
+                    method: 'POST',
+                    body: csvString
+                })
+
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement("a");
                 link.setAttribute("href", url);
