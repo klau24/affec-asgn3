@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 import os
 import io
@@ -45,12 +45,16 @@ def combine_data():
 
     # join dataframes based on the same timestamp
     merged_df = pd.merge(eyedataDF, brainDF, on='Timestamp', how='inner')
-    merged_df.to_csv('./eye_and_brain_data.csv', index=False)
+    merge_csv_string = merged_df.to_csv(index=False)
 
-    response = jsonify({'result': 'success'})
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-    response.headers.add('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
-    return response
+    headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+        'Content-Disposition': 'attachment;filename=combined.csv',
+        'Content-Type': 'text/csv'
+    }
+    return Response(merge_csv_string, headers=headers)
+
 if __name__ == '__main__':
     app.run()
